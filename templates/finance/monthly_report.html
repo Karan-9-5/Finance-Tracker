@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Monthly Report - FinanceTracker{% endblock %}
+{% block page_title %}Monthly Financial Report{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Last 6 Months Income vs Expenses</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Income</th>
+                        <th>Expenses</th>
+                        <th>Savings</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in report_data %}
+                    <tr>
+                        <td>{{ item.month }}</td>
+                        <td class="text-success">${{ item.income|floatformat:2 }}</td>
+                        <td class="text-danger">${{ item.expense|floatformat:2 }}</td>
+                        <td
+                            class="font-weight-bold {% if item.savings >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            ${{ item.savings|floatformat:2 }}
+                        </td>
+                        <td>
+                            {% if item.savings >= 0 %}
+                            <span class="badge bg-success">Net Surplus</span>
+                            {% else %}
+                            <span class="badge bg-danger">Net Deficit</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Report Analysis</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('monthlyChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for item in report_data %}"{{ item.month }}",{% endfor %}].reverse(),
+                datasets: [{
+                    label: 'Income',
+                    backgroundColor: '#4e73df',
+                    data: [{% for item in report_data %}{{ item.income }}, {% endfor %}].reverse()
+            }, {
+        label: 'Expenses',
+            backgroundColor: '#e74a3b',
+                data: [{% for item in report_data %} { { item.expense } }, {% endfor %}].reverse()
+            }]
+        },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+    });
+</script>
+{% endblock %}

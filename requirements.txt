@@ -1,0 +1,15 @@
+Django>=4.2
+djangorestframework
+django-environ
+psycopg2-binary
+django-allauth
+pillow
+python-dateutil
+django-crispy-forms
+crispy-bootstrap5
+django-bootstrap-v5
+whitenoise
+gunicorn
+PyJWT
+requests-oauthlib
+django-allauth[socialaccount]
